@@ -1,0 +1,192 @@
+/* ============================================================
+   PRINT / PDF EXPORT — A4, 20mm margins, no broken cards
+   ============================================================ */
+
+@page {
+  size: A4;
+  margin: 20mm;
+}
+
+@media print {
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+
+  html, body {
+    background: #FFFFFF !important;
+    display: block;
+    padding: 0;
+    font-size: 11.5px;
+  }
+
+  .page {
+    max-width: none;
+    width: 100%;
+    box-shadow: none;
+    padding: 0;
+  }
+
+  /* ---- Compression pass: print column (~643px) is narrower than the
+     850px screen column the base sizes were tuned for. Sizes below are
+     explicit overrides (px doesn't inherit from a root scale), tuned so
+     the full resume prints as 2 pages without breaking any card. ---- */
+
+  .page { max-width: 100%; }
+
+  .header { margin-bottom: 12px; padding-bottom: 10px; gap: 12px; }
+  .header-id h1 { font-size: 22px; margin-bottom: 4px; }
+  .role-title { font-size: 12px; margin-bottom: 3px; }
+  .value-prop { font-size: 10px; }
+  .eyebrow { font-size: 9px; margin-bottom: 6px; }
+  .header-contact { font-size: 9.5px; gap: 4px; }
+  .ic { width: 12px; height: 12px; margin-right: 4px; vertical-align: -2px; }
+
+  .ledger { margin-bottom: 11px; }
+  .ledger-item { padding: 6px 6px; gap: 2px; }
+  .ledger-value { font-size: 13.5px; }
+  .ledger-label { font-size: 7.1px; line-height: 1.2; }
+
+  .profile { margin-bottom: 12px; }
+  .profile p { font-size: 10px; line-height: 1.42; }
+
+  /* .exp used CSS Grid on screen (date column | content column).
+     Grid/flex formatting contexts are monolithic for print pagination
+     in Chrome — they never fragment internally, so a tall card gets
+     pushed to the next page as one piece, wasting all remaining space
+     on the current page. For print we drop to plain block flow (which
+     DOES fragment cleanly between bullets) and show the date inline
+     next to the company name instead of in a side column. */
+  .exp { display: block; }
+  .exp-when { display: none; }
+  .exp-dates-print {
+    display: inline;
+    font-family: var(--f-mono);
+    font-size: 8px;
+    font-weight: 600;
+    color: var(--accent);
+    margin-left: 8px;
+  }
+  .exp-head { display: block; }
+  .exp-head h3 { display: inline; }
+  .exp-loc { display: none; }
+
+  .timeline { display: block; }
+  .timeline--compact { display: block; }
+
+  .ledger, .cap-grid, .metric-grid { display: grid; } /* small + always break-inside:avoid — safe to keep as grid */
+  .footer-grid { display: block; }
+
+  .section { margin-bottom: 8px; }
+  .section-title { font-size: 10px; margin-bottom: 5px; padding-bottom: 3px; }
+  .section-num { font-size: 8.5px; }
+
+  .metric-grid { gap: 5px; }
+  .metric-card { padding: 7px 9px 6px; }
+  .metric-card--lead { padding: 8px 12px; gap: 10px; }
+  .metric-card--lead .metric-value { font-size: 16px; }
+  .metric-value { font-size: 14px; margin-bottom: 2px; }
+  .metric-label { font-size: 8.6px; line-height: 1.25; }
+
+  .timeline { gap: 5px; }
+  .exp { padding-bottom: 5px; }
+  /* .exp-list was display:flex on screen — same monolithic-fragmentation
+     issue as grid. A <ul> only needs vertical stacking, which plain
+     block flow already gives for free and fragments correctly. */
+  .exp-list { display: block; gap: 0; }
+  .exp-list li { margin-bottom: 1px; }
+  .exp-dates { font-size: 7.8px; line-height: 1.25; }
+  .exp-head h3 { font-size: 11px; }
+  .exp-loc { font-size: 8.3px; }
+  .exp-role { font-size: 9.3px; margin: 1px 0 1px; }
+  .exp-tag { font-size: 6.5px; padding: 1px 4px; margin-left: 5px; }
+  .exp-context { font-size: 8.3px; margin-bottom: 2px; }
+  .exp-list { gap: 1px; margin-top: 2px; }
+  .exp-list li { font-size: 9px; line-height: 1.28; padding-left: 10px; }
+  .exp-list li::before { top: 5.5px; }
+  .timeline--compact .exp { padding-bottom: 3px; }
+
+  .cap-grid { gap: 4px 10px; }
+  .cap-block h4 { font-size: 9px; margin-bottom: 1px; padding-left: 6px; }
+  .cap-block p { font-size: 8.2px; line-height: 1.25; padding-left: 6px; }
+
+  .tech-row { gap: 4px; margin-bottom: 4px; }
+  .tech-chip { font-size: 8.2px; padding: 2px 7px 2px 5px; }
+  .tech-note { font-size: 8.2px; }
+
+  /* CSS Grid fragments poorly across page breaks in Chrome's print
+     engine — a nested break-inside:avoid child can force the whole
+     grid track to a new page even when there's room. Flow this
+     section as plain blocks for print only; the two-column layout
+     is a screen-only convenience, not a content requirement. */
+  .footer-grid { display: block; gap: 0; }
+  .footer-grid > div:first-child { margin-bottom: 10px; }
+  .edu-item { margin-bottom: 4px; }
+  .edu-row { font-size: 9px; }
+  .edu-row span { font-size: 7.8px; }
+  .edu-item p { font-size: 8.2px; }
+
+  .cert-list { gap: 2px; }
+  .cert-list li { font-size: 8.5px; }
+  .ic-check { width: 9px; height: 9px; margin-right: 4px; }
+
+  .sector p { font-size: 8.6px; line-height: 1.35; }
+
+  .page-footer { margin-top: 8px; padding-top: 5px; font-size: 7.3px; }
+
+  /* Never split a card, row, or entry across a page break.
+     NOTE: .exp is intentionally NOT in this list — see below. A full
+     company block (title + up to 4 bullets) is the tallest atomic unit
+     in the document; forcing it never to split wastes up to a full
+     page of white space whenever it doesn't quite fit what's left on
+     the current page. Instead we protect it one level down: the
+     company name/role can never be orphaned from its first bullet,
+     and no single bullet is ever cut mid-line. */
+  .ledger,
+  .metric-card,
+  .cap-block,
+  .tech-chip,
+  .edu-item,
+  .header,
+  .profile {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  /* A company header must stay glued to the content under it */
+  .exp-head, .exp-role {
+    break-after: avoid;
+    page-break-after: avoid;
+  }
+  /* Each individual achievement stays whole — never split mid-bullet */
+  .exp-list li {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+  /* Keep at least the first bullet with its heading */
+  .exp-context { break-after: avoid; page-break-after: avoid; }
+
+  /* Keep a section heading glued to what follows it */
+  .section-title {
+    break-after: avoid;
+    page-break-after: avoid;
+  }
+
+  .timeline { break-inside: auto; }
+
+  h1, h2, h3, h4 { break-after: avoid; }
+
+  a[href]::after { content: ""; } /* no URL suffixes injected by some engines */
+
+  .ledger-item:hover::after,
+  .ledger-item::after { display: none; }
+
+  .page-footer { break-before: avoid; }
+
+  /* Avoid orphan/widow single lines in justified paragraph */
+  .profile p, .exp-list li, .sector p {
+    orphans: 3;
+    widows: 3;
+  }
+}
